@@ -1,6 +1,7 @@
 CURPATH=$(PWD)
 TARGET_DIR=$(CURPATH)/build/_output
 KUBECONFIG?=$(HOME)/.kube/config
+
 export OPERATOR_EXEC?=oc
 
 BUILD_GOPATH=$(TARGET_DIR):$(TARGET_DIR)/vendor:$(CURPATH)/cmd
@@ -9,14 +10,17 @@ IMAGE_BUILD_OPTS?=
 DOCKERFILE?=Dockerfile
 
 export APP_NAME=sriov-network-operator
+
 APP_REPO=github.com/openshift/$(APP_NAME)
 TARGET=$(TARGET_DIR)/bin/$(APP_NAME)
 IMAGE_TAG?=nfvpe/$(APP_NAME):latest
 MAIN_PKG=cmd/manager/main.go
+
 export NAMESPACE?=openshift-sriov-network-operator
 export ENABLE_ADMISSION_CONTROLLER?=true
 export GOFLAGS=-mod=vendor
 export GO111MODULE=on
+
 PKGS=$(shell go list ./... | grep -v -E '/vendor/|/test|/examples')
 
 # go source files, ignore vendor directory
@@ -78,9 +82,9 @@ test-e2e-conformance:
 test-%:
 	@hack/run-test.sh $*
 
-deploy-setup-k8s: export NAMESPACE=sriov-network-operator
-deploy-setup-k8s: export ENABLE_ADMISSION_CONTROLLER=false
-deploy-setup-k8s: export CNI_BIN_PATH=/opt/cni/bin
+test-e2e-k8s: export NAMESPACE=sriov-network-operator
+test-e2e-k8s: export ENABLE_ADMISSION_CONTROLLER=false
+test-e2e-k8s: export CNI_BIN_PATH=/opt/cni/bin
 test-e2e-k8s: test-e2e
 
 undeploy:

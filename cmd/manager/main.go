@@ -9,7 +9,7 @@ import (
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	sriovnetworkv1 "github.com/openshift/sriov-network-operator/pkg/apis/sriovnetwork/v1"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -208,10 +208,12 @@ func createDefaultOperatorConfig(cfg *rest.Config) error {
 	}
 	config := &sriovnetworkv1.SriovOperatorConfig{
 		Spec: sriovnetworkv1.SriovOperatorConfigSpec{
-			EnableInjector:           func() *bool { b := true; return &b }(),
-			EnableOperatorWebhook:    func() *bool { b := true; return &b }(),
-			ConfigDaemonNodeSelector: map[string]string{},
-			LogLevel:                 2,
+			EnableInjector:        func() *bool { b := true; return &b }(),
+			EnableOperatorWebhook: func() *bool { b := true; return &b }(),
+			ConfigDaemonNodeSelector: map[string]string{
+				"beta.kubernetes.io/os": "linux",
+			},
+			LogLevel: 2,
 		},
 	}
 	name := "default"
